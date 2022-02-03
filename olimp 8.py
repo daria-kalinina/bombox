@@ -5,7 +5,7 @@ import random
 import time, datetime
 
 
-def fon1():
+def fon1():                                                                 ### заставка
     timer_stop = datetime.datetime.utcnow() + datetime.timedelta(seconds=15)
     sizef = width, height = 600, 600
     screen = pygame.display.set_mode(sizef)
@@ -27,13 +27,13 @@ def fon1():
     pygame.quit()
 fon1()
 
-pygame.init()
+pygame.init()                                                               ### подключаем заставку
 size = width, height = 600, 600
 screen = pygame.display.set_mode(size)
 pygame.draw.line(screen, 'white', (0, 28), (600, 28), width=1)
 
 
-def fon():
+def fon():                                                          ### конечная картинка радуга
     size = width, height = 600, 600
     screen = pygame.display.set_mode(size)
     name = 'mol.png'
@@ -52,9 +52,9 @@ def fon():
     pygame.quit()
 
 
-def load_image(name, colorkey=None):
+def load_image(name, colorkey=None):                                        ### убираем фон с картинки
     fullname = os.path.join('data', name)
-    # если файл не существует, то выходим
+                                        # если файл не существует, то выходим
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
@@ -63,7 +63,7 @@ def load_image(name, colorkey=None):
     return image
 
 font_name = pygame.font.match_font('arial')
-def draw_text(surf, text, size, x, y):
+def draw_text(surf, text, size, x, y):                  ###рисуем счётчик
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(str(text), True, 'black')
     text_rect = text_surface.get_rect()
@@ -76,7 +76,7 @@ def draw_text(surf, text, size, x, y):
     surf.blit(text_surface, text_rect)
 
 
-def load_level(filename):
+def load_level(filename):                       ###рисуем уровни
     y1 = 0
     c = []
     c1 = []
@@ -93,6 +93,8 @@ def load_level(filename):
                     c1.append(x*30)
                     c2.append(y*30)
     return [c, c1, c2]
+
+###программируем бомбочку, яблочко
 
 image = load_image("bomb.png")
 x=10
@@ -116,7 +118,7 @@ scht = -10
 nx = []
 ny = []
 running = True
-while running:
+while running: ###запускаем игру
     pygame.draw.rect(screen, (0, 0, 0), ((x, y), (30, 30)))
     x += xdir * v * x_clock.tick() / 1000
     y += ydir * v * y_clock.tick() / 1000
@@ -130,13 +132,13 @@ while running:
         draw_text(screen, scht, 18, width / 2, 10)
         pygame.draw.rect(screen, (0, 0, 0), ((x_ap, y_ap), (30, 30)))
         scht += 10
-        nx.append(x_ap)
+        nx.append(x_ap)               ###смотрим чтобы яблочко на заходило на коробки и не появлялась на одном месте 2ды
         ny.append(y_ap)
         while x_ap in nx or y_ap in ny:
             x_ap = random.randint(30, 570)
             y_ap = random.randint(70, 570)
-    na = str(int(scht // 10))
-    if scht < 100:
+    na = str(int(scht // 10))                               ###считаем счётчик
+    if scht < 100:                                          ###останавливаем при завершении уровня 9
         c = load_level(f'{na}.txt')
     else:
         running = False
@@ -147,23 +149,23 @@ while running:
     ny = c[2]
     image_b = load_image("box.png")
     image_b = pygame.transform.scale(image_b, (25, 25))
-    for i in coors:
+    for i in coors:                                         ###программируем все коробки разом
         x_b = i[0]
         y_b = i[1]
         screen.blit(image_b, (x_b, y_b))
-        c_b = abs(abs(x) - abs(x_b))  ### А ЗДЕСЬ НАЧИНАЕТСЯ УРОВЕНЬ
+        c_b = abs(abs(x) - abs(x_b))
         d_b = abs(abs(y) - abs(y_b))
         if c_b < 30 and d_b < 30:
             pygame.draw.rect(screen, (0, 0, 0), ((x, y), (30, 30)))
             x=10
             y=40
-        c_ba = abs(abs(x_ap) - abs(x_b))
+        c_ba = abs(abs(x_ap) - abs(x_b))                          ### смотрим чтобы яблочко на попадало на коробки
         d_ba = abs(abs(y_ap) - abs(y_b))
         if c_ba < 30 and d_ba < 30:
             pygame.draw.rect(screen, (0, 0, 0), ((x_ap, y_ap), (30, 30)))
             x_ap = random.randint(30, 570)
             y_ap = random.randint(70, 570)
-    if y < 32:
+    if y < 32:                                                  ### программируем бомбочку на отталкивание от стенок
         xdir = 0
         ydir = 1
     if y > 570:
@@ -175,7 +177,7 @@ while running:
     if x > 570:
         xdir = -1
         ydir = 0
-    for event in pygame.event.get():
+    for event in pygame.event.get(): ###программируем кнопки для управления бомбочкой
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYUP:
